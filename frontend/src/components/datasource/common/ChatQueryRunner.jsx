@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { aiAPI, formatApiError } from "../../../utils/api";
 import VisualizationPanel from "./VisualizationPanel";
 import ExportActions from "./ExportActions";
@@ -131,7 +131,7 @@ export default function ChatQueryRunner({
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [, setLoadingSuggestions] = useState(false);
   const [chartDataMap, setChartDataMap] = useState({});
   const currentSessionRef = useRef(sessionId || null);
   const messagesEndRef = useRef(null);

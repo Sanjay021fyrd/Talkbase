@@ -12,7 +12,8 @@ from datasources.schemas import (
     DataSourceResponse,
     SQLType
 )
-from datasources.store import save_datasource, list_datasources, delete_datasource
+from datasources.store import save_datasource, list_datasources, delete_datasource, get_datasource_by_id
+from utils.sql_url import build_sql_url
 
 router = APIRouter(prefix="/datasources", tags=["datasources"])
 
@@ -52,12 +53,12 @@ def connect_sql(payload: SQLConnectionRequest, user: dict = Depends(require_user
     """
     Connect to a SQL database (MySQL or PostgreSQL).
     """
-    db_url = ""
-    if payload.type == SQLType.MYSQL:
-        db_url = f"mysql+pymysql://{payload.username}:{payload.password}@{payload.host}:{payload.port}/{payload.database}"
-    elif payload.type == SQLType.POSTGRESQL:
-        db_url = f"postgresql+psycopg2://{payload.username}:{payload.password}@{payload.host}:{payload.port}/{payload.database}"
-    
+    # URL.create escapes special characters (@ / : # ? %) in the password and database name
+    db_url = build_sql_url(
+        payload.type.value, payload.username, payload.password,
+        payload.host, payload.port, payload.database,
+    )
+
     try:
         engine = create_engine(db_url)
         with engine.connect() as connection:
@@ -144,7 +145,22 @@ def remove_datasource(datasource_id: str, user: dict = Depends(require_user)):
     """
     Delete a saved datasource connection.
     """
+    # Remember the uploaded file (spreadsheets only) so it can be removed with the datasource
+    doc = get_datasource_by_id(datasource_id)
+    upload_path = None
+    if doc and str(doc.get("user_id")) == str(user["id"]) and doc.get("type") == "pandas":
+        upload_path = (doc.get("details") or {}).get("path")
+
     deleted = delete_datasource(datasource_id, str(user["id"]))
+    if deleted and upload_path:
+        base = os.path.abspath(UPLOAD_DIR)
+        target = os.path.abspath(upload_path)
+        # only ever delete files that live inside the uploads folder
+        if os.path.commonpath([base, target]) == base and os.path.isfile(target):
+            try:
+                os.remove(target)
+            except OSError:
+                pass
     if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

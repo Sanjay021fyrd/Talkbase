@@ -140,18 +140,13 @@ const Icon = ({ d, className = "w-5 h-5" }) => (
   </svg>
 );
 
-/** Interactive demo: pick a question, watch the query type out and the answer appear. */
-const AuroraDemo = () => {
-  const [active, setActive] = useState(0);
+/** The two answer panels of the demo: typed query, table and growing bars. */
+const DemoPanels = ({ d }) => {
   const [typed, setTyped] = useState("");
   const [grown, setGrown] = useState(false);
-  const [listening, setListening] = useState(false);
-  const d = DEMOS[active];
 
   useEffect(() => {
     let n = 0;
-    setTyped("");
-    setGrown(false);
     const grow = setTimeout(() => setGrown(true), 60);
     const t = setInterval(() => {
       n += 2;
@@ -164,62 +159,8 @@ const AuroraDemo = () => {
     };
   }, [d]);
 
-  const next = () => setActive((i) => (i + 1) % DEMOS.length);
-
-  const listen = () => {
-    if (listening) return;
-    setListening(true);
-    setTimeout(() => {
-      setListening(false);
-      next();
-    }, 1300);
-  };
-
   return (
-    <div className="text-left">
-      {/* input pill */}
-      <div className="surface rounded-full flex items-center gap-2 pl-5 pr-1.5 py-1.5">
-        <span className="flex-1 text-sm text-ink-400 truncate">
-          {d.q}
-        </span>
-        <button
-          type="button"
-          onClick={listen}
-          aria-label="Try the microphone"
-          className={`w-9 h-9 rounded-full bg-white/10 text-ink-100 flex items-center justify-center hover:bg-white/15 transition ${
-            listening ? "animate-mic-pulse" : ""
-          }`}
-        >
-          <Icon d={MIC_PATH} className="w-4 h-4" />
-        </button>
-        <button
-          type="button"
-          onClick={next}
-          className="btn-gradient text-ink-950 text-sm font-semibold rounded-full h-9 px-5 hover:brightness-110 transition"
-        >
-          Ask
-        </button>
-      </div>
-
-      {/* question chips */}
-      <div className="flex flex-wrap gap-2 mt-3">
-        {DEMOS.map((x, i) => (
-          <button
-            key={x.chip}
-            type="button"
-            onClick={() => setActive(i)}
-            className={`px-3.5 py-1.5 rounded-full text-xs border transition ${
-              i === active
-                ? "bg-violet-300/25 border-violet-300 text-white"
-                : "bg-white/5 border-white/20 text-ink-200 hover:bg-white/10"
-            }`}
-          >
-            {x.chip}
-          </button>
-        ))}
-      </div>
-
-      {/* answer panels */}
+    <>
       <div className="grid sm:grid-cols-2 gap-3 mt-4">
         <div className="surface rounded-2xl p-4">
           <p className="eyebrow mb-2">You asked</p>
@@ -278,6 +219,73 @@ const AuroraDemo = () => {
           </div>
         </div>
       </div>
+    </>
+  );
+};
+
+/** Interactive demo: pick a question, watch the query type out and the answer appear. */
+const AuroraDemo = () => {
+  const [active, setActive] = useState(0);
+  const [listening, setListening] = useState(false);
+  const d = DEMOS[active];
+
+  const next = () => setActive((i) => (i + 1) % DEMOS.length);
+
+  const listen = () => {
+    if (listening) return;
+    setListening(true);
+    setTimeout(() => {
+      setListening(false);
+      next();
+    }, 1300);
+  };
+
+  return (
+    <div className="text-left">
+      {/* input pill */}
+      <div className="surface rounded-full flex items-center gap-2 pl-5 pr-1.5 py-1.5">
+        <span className="flex-1 text-sm text-ink-400 truncate">
+          {d.q}
+        </span>
+        <button
+          type="button"
+          onClick={listen}
+          aria-label="Try the microphone"
+          className={`w-9 h-9 rounded-full bg-white/10 text-ink-100 flex items-center justify-center hover:bg-white/15 transition ${
+            listening ? "animate-mic-pulse" : ""
+          }`}
+        >
+          <Icon d={MIC_PATH} className="w-4 h-4" />
+        </button>
+        <button
+          type="button"
+          onClick={next}
+          className="btn-gradient text-ink-950 text-sm font-semibold rounded-full h-9 px-5 hover:brightness-110 transition"
+        >
+          Ask
+        </button>
+      </div>
+
+      {/* question chips */}
+      <div className="flex flex-wrap gap-2 mt-3">
+        {DEMOS.map((x, i) => (
+          <button
+            key={x.chip}
+            type="button"
+            onClick={() => setActive(i)}
+            className={`px-3.5 py-1.5 rounded-full text-xs border transition ${
+              i === active
+                ? "bg-violet-300/25 border-violet-300 text-white"
+                : "bg-white/5 border-white/20 text-ink-200 hover:bg-white/10"
+            }`}
+          >
+            {x.chip}
+          </button>
+        ))}
+      </div>
+
+      {/* answer panels (re-mounted per question, so the typing animation restarts) */}
+      <DemoPanels key={active} d={d} />
     </div>
   );
 };

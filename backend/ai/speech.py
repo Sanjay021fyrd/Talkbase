@@ -6,6 +6,23 @@ from ai.llm.groq import get_groq_client
 logger = logging.getLogger(__name__)
 
 
+# Words Whisper tends to invent when it is given silence or noise.
+_SILENCE_HALLUCINATIONS = {"you", "thank you", "thanks for watching", "thanks for listening", "bye", "bye bye"}
+
+
+def _looks_like_silence(transcription, text: str) -> bool:
+    """True when Whisper itself says there is no speech, or when the text is a known silence artefact."""
+    segments = getattr(transcription, "segments", None) or []
+    probs = []
+    for seg in segments:
+        p = seg.get("no_speech_prob") if isinstance(seg, dict) else getattr(seg, "no_speech_prob", None)
+        if p is not None:
+            probs.append(p)
+    if probs and min(probs) > 0.6:
+        return True
+    return text.strip().lower().strip(" .!?,") in _SILENCE_HALLUCINATIONS
+
+
 async def transcribe_audio(
     file_bytes: bytes,
     filename: str,
@@ -32,6 +49,10 @@ async def transcribe_audio(
 
         detected_language = getattr(transcription, "language", None) or "en"
         text = transcription.text or ""
+
+        if _looks_like_silence(transcription, text):
+            logger.info("Whisper result discarded: audio looks silent (text=%r)", text)
+            return ""
 
         logger.info(
             "Whisper transcription – detected_language=%s, length=%d",

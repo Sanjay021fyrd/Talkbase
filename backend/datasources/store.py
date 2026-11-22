@@ -67,6 +67,9 @@ def save_datasource(user_id: str, type: str, details: Dict[str, Any]) -> Dict[st
     if type in ["mysql", "psql"]:
         query["details.host"] = details["host"]
         query["details.database"] = details["database"]
+    elif type == "pandas" and details.get("filename"):
+        # one datasource per uploaded file, so a new upload no longer replaces the previous one
+        query["details.filename"] = details["filename"]
     
     update = {
         "$set": {

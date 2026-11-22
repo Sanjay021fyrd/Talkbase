@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { aiAPI } from "../../../utils/api";
 
 // Chart type icons mapping

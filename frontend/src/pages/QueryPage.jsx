@@ -8,6 +8,7 @@ import SpreadsheetQueryPanel from "../components/datasource/spreadsheet/Spreadsh
 import SessionSidebar from "../components/datasource/common/SessionSidebar";
 import { loadDatasourceId } from "../components/datasource/common/storage";
 import { datasourceAPI, aiAPI } from "../utils/api";
+import { parseServerDate } from "../utils/time";
 
 const typeTitle = {
   sql: "SQL",
@@ -40,7 +41,7 @@ export default function QueryPage() {
           id: idx * 2,
           type: "user",
           content: entry.natural_query,
-          timestamp: new Date(entry.created_at),
+          timestamp: parseServerDate(entry.created_at),
         });
         // AI response
         msgs.push({
@@ -57,7 +58,7 @@ export default function QueryPage() {
             results: entry.results ?? null,
             columns: entry.columns ?? null,
           },
-          timestamp: new Date(entry.created_at),
+          timestamp: parseServerDate(entry.created_at),
         });
       });
       setInitialMessages(msgs);

@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 import Button from "../components/Button";
-import { datasourceAPI, aiAPI, formatApiError } from "../utils/api";
+import { datasourceAPI, aiAPI } from "../utils/api";
+import { parseServerDate } from "../utils/time";
 
 const typeRouteMap = {
   mysql: "sql",
@@ -65,7 +66,7 @@ const Dashboard = () => {
 
   const formatTimeAgo = (isoString) => {
     if (!isoString) return "";
-    const d = new Date(isoString);
+    const d = parseServerDate(isoString);
     const now = new Date();
     const diffMin = Math.floor((now - d) / 60000);
     if (diffMin < 1) return "just now";

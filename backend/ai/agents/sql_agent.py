@@ -5,6 +5,7 @@ import logging
 from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.exc import SQLAlchemyError
 
+from utils.sql_url import build_sql_url
 from ai.agents.base import BaseAgent
 from datasources.store import decrypt_password
 
@@ -38,7 +39,7 @@ class SQLAgent(BaseAgent):
     def __init__(self):
         super().__init__("sql")
     
-    def _build_connection_url(self, datasource: Dict[str, Any]) -> str:
+    def _build_connection_url(self, datasource: Dict[str, Any]):
         """Build SQLAlchemy connection URL from datasource details."""
         details = datasource.get("details", {})
         db_type = datasource.get("type", "mysql")
@@ -49,10 +50,7 @@ class SQLAgent(BaseAgent):
         password = details.get("password", "")
         database = details.get("database", "")
         
-        if db_type == "mysql":
-            return f"mysql+pymysql://{username}:{password}@{host}:{port}/{database}"
-        else:  # PostgreSQL
-            return f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}"
+        return build_sql_url(db_type, username, password, host, port, database)
     
     async def get_schema_context(self, datasource: Dict[str, Any]) -> str:
         """

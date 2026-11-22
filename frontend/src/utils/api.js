@@ -108,7 +108,7 @@ export function formatApiError(payload) {
         return JSON.stringify(d);
       });
       return msgs.join(" | ");
-    } catch (e) {
+    } catch {
       return JSON.stringify(detail);
     }
   }
@@ -118,7 +118,7 @@ export function formatApiError(payload) {
     if (detail.msg) return detail.msg;
     try {
       return JSON.stringify(detail);
-    } catch (e) {
+    } catch {
       return String(detail);
     }
   }

@@ -152,23 +152,23 @@ Tip: start typing anywhere on the chat page and the input is focused for you; En
 
 ## Sample data
 
-`backend/utils/` contains scripts that create realistic demo data so you can try the app straight away.
+`backend/utils/` contains scripts for demo data. Two of them work on their own; the Python database scripts need the tables to exist first.
 
-| Script | Creates |
+| Script | What it does |
 | --- | --- |
-| `mysql_ecommerce_populator.py`, `mysql_retail_inventory_populator.py`, `mysql_saas_subscriptions_populator.py` | Three MySQL databases (`ecommerce`, `retail_inventory`, `saas_subscriptions`) |
-| `psql_fintech_transactions_populator.py`, `psql_logistics_shipments_populator.py`, `psql_marketing_campaigns_populator.py` | Three PostgreSQL databases (`fintech_transactions`, `logistics_shipments`, `marketing_campaigns`) |
-| `postgres_sample_databases.sql` | Five small PostgreSQL databases (school, library, hospital, restaurant, company). Run once from **SQL Shell (psql)** with `\i` |
-| `excel_hr_attrition_populator.py`, `excel_sales_kpi_populator.py`, `excel_supply_chain_populator.py`, `excel_populator.py` | Excel workbooks for the spreadsheet option |
+| `postgres_sample_databases.sql` | **Ready to run.** Creates five small PostgreSQL databases (school, library, hospital, restaurant, company) with tables and sample rows. Run it once from **SQL Shell (psql)** with `\i` |
+| `excel_hr_attrition_populator.py`, `excel_sales_kpi_populator.py`, `excel_supply_chain_populator.py`, `excel_populator.py` | **Ready to run.** Write demo Excel / CSV files into `backend/data/` that you can upload as a spreadsheet. See `backend/EXCEL_DATA_GUIDE.md` |
+| `mysql_ecommerce_populator.py`, `mysql_retail_inventory_populator.py`, `mysql_saas_subscriptions_populator.py` | Insert thousands of fake rows into the MySQL databases `ecommerce`, `retail_inventory`, `saas_subscriptions` |
+| `psql_fintech_transactions_populator.py`, `psql_logistics_shipments_populator.py`, `psql_marketing_campaigns_populator.py` | Insert fake rows into the PostgreSQL databases `fintech_transactions`, `logistics_shipments`, `marketing_campaigns` |
 
-The Python populators read their connection settings from environment variables: `MYSQL_HOST`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DATABASE`, and `EXCEL_*_FILE` / `EXCEL_*_ROWS` for the workbooks. Check the defaults at the top of each script (they include a placeholder password) before running. The MySQL scripts also use `mysql-connector-python`, which is not in `requirements.txt`:
+**Before running the six database scripts:** they only insert rows. The database and its tables must already exist (the table definitions are not part of this repo); otherwise the script stops with "database does not exist" or "relation does not exist". The MySQL scripts use port 3306 only and need `mysql-connector-python`, which is not in `requirements.txt`.
+
+The Python scripts read their settings from environment variables: `MYSQL_HOST`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DATABASE`, and `EXCEL_*_FILE` / `EXCEL_*_ROWS` for the workbooks. Check the defaults at the top of each script (they include a placeholder password) before running.
 
 ```powershell
 pip install mysql-connector-python
 python utils/mysql_ecommerce_populator.py
 ```
-
-See `backend/EXCEL_DATA_GUIDE.md` for the spreadsheet generators in detail.
 
 ## API reference
 

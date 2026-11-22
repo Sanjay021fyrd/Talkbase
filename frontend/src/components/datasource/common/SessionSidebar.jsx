@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { aiAPI } from "../../../utils/api";
+import { parseServerDate } from "../../../utils/time";
 
 /**
  * Collapsible sidebar showing past chat sessions for a datasource.
@@ -61,7 +62,7 @@ export default function SessionSidebar({
 
   const formatDate = (isoString) => {
     if (!isoString) return "";
-    const d = new Date(isoString);
+    const d = parseServerDate(isoString);
     const now = new Date();
     const diffMs = now - d;
     const diffMin = Math.floor(diffMs / 60000);

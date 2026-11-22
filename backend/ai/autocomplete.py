@@ -188,7 +188,10 @@ Your {limit} suggestions:"""
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.3,
-                max_completion_tokens=200,  # Keep it short
+                # gpt-oss is a reasoning model: it spends tokens thinking before it answers, so a tiny
+                # limit (the old 200) used up the whole budget and returned an empty answer.
+                max_completion_tokens=1500,
+                reasoning_effort="low",
                 top_p=0.9,
                 stream=False
             )
