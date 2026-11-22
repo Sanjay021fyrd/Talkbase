@@ -34,11 +34,11 @@ This guide explains the Excel/CSV data population script created for the TalkBas
 ### 1. Activate Virtual Environment
 ```bash
 cd <project>\backend
-source intelenv/Scripts/activate  # On Windows Git Bash
+source myvenv/Scripts/activate  # On Windows Git Bash
 # or
-.\intelenv\Scripts\activate.bat   # On Windows CMD
+.\myvenv\Scripts\activate.bat   # On Windows CMD
 # or
-.\intelenv\Scripts\Activate.ps1   # On Windows PowerShell
+.\myvenv\Scripts\Activate.ps1   # On Windows PowerShell
 ```
 
 ### 2. Ensure Dependencies
