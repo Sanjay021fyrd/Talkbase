@@ -1,0 +1,258 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   TalkBase design tokens: "Aurora glass"
+   Dark navy base, a sky-to-violet glow, frosted glass panels.
+   "brand"  = sky blue (main accent)
+   "violet" = secondary accent (end of the gradient)
+   "lang"   = mint, used for generated SQL / Pandas code
+   "ink"    = navy surfaces and soft lavender-white text
+   Every component uses these tokens, so the look can be changed here.
+------------------------------------------------------------------- */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    monospace;
+
+  --color-brand-50: #f0f9ff;
+  --color-brand-100: #e0f2fe;
+  --color-brand-200: #bae6fd;
+  --color-brand-300: #7dd3fc;
+  --color-brand-400: #38bdf8;
+  --color-brand-500: #0ea5e9;
+  --color-brand-600: #0284c7;
+  --color-brand-700: #0369a1;
+  --color-brand-800: #075985;
+  --color-brand-900: #0c4a6e;
+  --color-brand-950: #082f49;
+
+  --color-violet-200: #ddd6fe;
+  --color-violet-300: #c4b5fd;
+  --color-violet-400: #a78bfa;
+  --color-violet-500: #8b5cf6;
+  --color-violet-600: #7c3aed;
+
+  --color-lang-50: #ecfdf5;
+  --color-lang-100: #d1fae5;
+  --color-lang-200: #a7f3d0;
+  --color-lang-300: #6ee7b7;
+  --color-lang-400: #34d399;
+  --color-lang-500: #10b981;
+  --color-lang-600: #059669;
+  --color-lang-700: #047857;
+  --color-lang-800: #065f46;
+  --color-lang-900: #064e3b;
+  --color-lang-950: #022c22;
+
+  --color-ink-50: #f4f5ff;
+  --color-ink-100: #eef0ff;
+  --color-ink-200: #d9dcf5;
+  --color-ink-300: #b4b9dc;
+  --color-ink-400: #9aa0c8;
+  --color-ink-500: #7b82ad;
+  --color-ink-600: #3a3f66;
+  --color-ink-700: #262a40;
+  --color-ink-800: #181b30;
+  --color-ink-900: #11142a;
+  --color-ink-950: #0b0d17;
+}
+
+/* ---------- Base ---------- */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-ink-950);
+  color: var(--color-ink-100);
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  letter-spacing: -0.015em;
+}
+
+code,
+pre,
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink-950);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-600);
+  border-radius: 6px;
+  border: 2px solid var(--color-ink-950);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-700);
+}
+
+/* ---------- Focus / selection ---------- */
+*:focus-visible {
+  outline: 2px solid var(--color-brand-300);
+  outline-offset: 2px;
+}
+::selection {
+  background-color: var(--color-violet-300);
+  color: var(--color-ink-950);
+}
+
+/* ---------- Aurora glass helpers ---------- */
+
+/* Page background: navy with a sky glow (top left) and a violet glow (top right) */
+.bg-app {
+  background-color: var(--color-ink-950);
+  background-image:
+    radial-gradient(46rem 24rem at 8% -6%, rgb(125 211 252 / 0.26), transparent 66%),
+    radial-gradient(44rem 26rem at 98% 0%, rgb(196 181 253 / 0.26), transparent 66%),
+    radial-gradient(40rem 22rem at 50% 110%, rgb(56 189 248 / 0.10), transparent 70%);
+  background-attachment: fixed;
+}
+
+/* Gradient text (sky -> violet) */
+.text-gradient {
+  background-image: linear-gradient(100deg, #bae6fd 0%, #7dd3fc 40%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Frosted glass panel: cards, navbar, panels */
+.surface {
+  background: rgb(255 255 255 / 0.06);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.10) inset,
+    0 14px 34px -16px rgb(0 0 0 / 0.7);
+}
+
+/* Primary action gradient */
+.btn-gradient {
+  background-image: linear-gradient(100deg, #7dd3fc, #c4b5fd);
+}
+
+/* Small mono label: "en → sql" */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-400);
+}
+
+/* Machine-language block (generated SQL / Pandas) */
+.code-block {
+  font-family: var(--font-mono);
+  background: rgb(2 44 34 / 0.45);
+  border: 1px solid rgb(52 211 153 / 0.28);
+  color: var(--color-lang-200);
+  border-radius: 0.75rem;
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes mic-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(196 181 253 / 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 14px transparent;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.55s ease-out both;
+}
+.animate-slide-in-left {
+  animation: slideInLeft 0.55s ease-out both;
+}
+.animate-slide-in-right {
+  animation: slideInRight 0.55s ease-out both;
+}
+.animate-floaty {
+  animation: floaty 6s ease-in-out infinite;
+}
+.animate-caret {
+  animation: caret 1s steps(1) infinite;
+}
+.animate-mic-pulse {
+  animation: mic-pulse 0.9s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

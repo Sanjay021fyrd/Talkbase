@@ -1,0 +1,67 @@
+import os
+import logging
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+
+from auth.middleware import AuthMiddleware
+from auth.router import router as auth_router
+from auth.security import frontend_urls
+from datasources.router import router as datasources_router
+from ai.router import router as ai_router
+from auth.store import ensure_indexes
+from utils.db import ping_db
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+
+
+app = FastAPI(
+    title="TalkBase API",
+    description="Voice-driven database chat platform with AI-powered query generation",
+    version="1.0.0"
+)
+
+# Allowed browser origins: local dev, the configured frontend URL (e.g. a LAN IP or public
+# domain used in reset-password links), and any extras from CORS_ORIGINS.
+cors_origins = set(frontend_urls())
+cors_origins.update(o.strip().rstrip("/") for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip())
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=sorted(cors_origins),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.add_middleware(AuthMiddleware)
+app.include_router(auth_router)
+app.include_router(datasources_router)
+app.include_router(ai_router)
+
+
+@app.on_event("startup")
+async def _startup() -> None:
+    ping_db()
+    ensure_indexes()
+    
+    # Log AI service status
+    from ai.llm.groq import get_groq_client
+    groq_status = get_groq_client() is not None
+    logging.getLogger(__name__).info(f"Groq status: {'available' if groq_status else 'unavailable (check GROQ_API_KEY)'}")
+
+@app.get('/')
+def root():
+    return({"msg":"Welcome to TalkBase API"})
+
